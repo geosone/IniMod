@@ -46,7 +46,10 @@ jobs:
         run: |
           $url = 'https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%20${{ matrix.target.bits }}%20bits/Lazarus%204.4/lazarus-4.4-fpc-3.2.2-${{ matrix.target.suffix }}.exe'
           $installer = Join-Path $env:RUNNER_TEMP 'lazarus-setup.exe'
-          Invoke-WebRequest $url -OutFile $installer
+          & curl.exe --fail --location --retry 4 --output $installer $url
+          if ($LASTEXITCODE) { throw 'Compiler download failed.' }
+          $bytes = [IO.File]::ReadAllBytes($installer)
+          if ($bytes.Length -lt 100MB -or $bytes[0] -ne 0x4d -or $bytes[1] -ne 0x5a) { throw 'Compiler download is not a complete executable.' }
           $destination = Join-Path $env:RUNNER_TEMP 'lazarus'
           $process = Start-Process $installer -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', ('/DIR=' + $destination)) -Wait -PassThru
           if ($process.ExitCode -ne 0) { throw "Lazarus installation failed: $($process.ExitCode)" }

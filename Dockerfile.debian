@@ -1,6 +1,6 @@
 ARG DEBIAN_SUITE=bookworm
 FROM debian:${DEBIAN_SUITE}-slim AS builder
-RUN apt-get update && apt-get install -y --no-install-recommends fp-compiler fp-units-fcl fp-units-base lazarus-src make binutils debhelper dpkg-dev python3 ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential fp-compiler fp-units-fcl fp-units-base lazarus-src make binutils debhelper dpkg-dev python3 ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /build/source
 COPY . .
 RUN dpkg-buildpackage -us -uc && mkdir /output && cp /build/*.deb /build/*.dsc /build/*.tar.xz /build/*.changes /build/*.buildinfo /output/
