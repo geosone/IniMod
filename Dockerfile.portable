@@ -1,0 +1,7 @@
+FROM debian:bookworm-slim AS builder
+RUN apt-get update && apt-get install -y --no-install-recommends fp-compiler fp-units-fcl fp-units-base lazarus-src make python3 ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /build
+COPY . .
+RUN make test && mkdir -p /portable /output && cp build/inimod /portable/inimod && cat Readme.md third_party/JPLib/Readme.md /usr/share/doc/fp-units-rtl-3.2.2/copyright /usr/share/doc/lazarus-src-*/copyright > /portable/README.txt && tar -czf /output/inimod-1.0-linux-$(dpkg --print-architecture).tar.gz -C /portable inimod README.txt
+FROM scratch
+COPY --from=builder /output/ /

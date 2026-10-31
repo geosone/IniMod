@@ -1,5 +1,5 @@
 #Requires -Version 7.4
-# Package a previously built and tested native executable; compile in Build-Windows.ps1.
+# Create the portable download, with exactly the executable and one README.
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$BinaryDirectory,
@@ -8,4 +8,4 @@ param(
     [ValidateSet('x86', 'x64')][string]$Architecture = 'x64'
 )
 $ErrorActionPreference = 'Stop'
-& (Join-Path $PSScriptRoot 'powershell/linux/all/New-WindowsMsi.ps1') @PSBoundParameters
+& (Join-Path $PSScriptRoot 'powershell/all/New-WindowsArchive.ps1') @PSBoundParameters

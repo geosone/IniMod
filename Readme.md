@@ -127,17 +127,22 @@ How to build:
 
 2021.02.02 - Version 1.0
 
-## Maintained packages
+## Maintained portable builds
 
-The maintained fork builds Debian packages and native Windows x86/x64 MSI
-packages through GitHub Actions. The common `debian/` recipe serves Debian
-12/13 and amd64/arm64/armhf; it can also be used by Jenkins Debian Glue on
-debdev. Build and test status must be checked before publishing downloads.
+The maintained fork builds native Linux amd64/arm64/armhf tar.gz archives and
+Windows x86/x64 ZIP archives through GitHub Actions. Each archive contains
+exactly one executable (`inimod` or `inimod.exe`) and README.txt, including
+notices. No MSI, DEB, service or global PATH change is installed.
 
-The Linux fork accepts absolute filenames beginning with `/` without treating
-them as Windows-style options. Existing commands and option names are retained.
-The required JPLib Base/Logging snapshot is vendored and pinned in
-`third_party/JPLib/SNAPSHOT.txt`; no retired download website is required.
+The executable name never includes an architecture suffix. Extract it directly
+into the Mystic directory to preserve old Sysop script calls. The fork retains
+existing commands/options, fixes absolute Linux filenames and quoted executable
+paths on Windows, and tests both ordinary and spaced executable paths.
 
-Application/package builds belong in this repository. Mystic installation and
-configuration integration belong in mysticd; BBS theme assets in mystic-theme.
+Debian/MSI recipes were developed and then retired at the operator's request.
+They remain in legacy/ only for review; active CI does not invoke them.
+The required JPLib snapshot and its local parser fix are documented in
+third_party/JPLib/SNAPSHOT.txt. No retired download website is required.
+
+Application builds belong here. Mystic integration belongs in mysticd; BBS theme
+assets in mystic-theme. Only publish archives after native command tests pass.

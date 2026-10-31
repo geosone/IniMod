@@ -58,7 +58,7 @@ foreach ($notice in $noticeFiles) {
     Copy-Item $notice.FullName $output
 }
 Copy-Item (Join-Path $root 'Readme.md') (Join-Path $output 'README.md')
-Copy-Item (Join-Path $root 'debian/copyright') (Join-Path $output 'COPYRIGHT.txt')
+Copy-Item (Join-Path $root 'legacy/debian/copyright') (Join-Path $output 'COPYRIGHT.txt')
 Copy-Item (Join-Path $root 'third_party/JPLib/Readme.md') (Join-Path $output 'JPLib-README.md')
 $hash = (Get-FileHash $exe).Hash.ToLowerInvariant()
 [IO.File]::WriteAllText((Join-Path $output 'SHA256SUMS'), "$hash  inimod.exe`n")
