@@ -1,0 +1,43 @@
+====== Downloads ======
+
+Hier findest du die öffentlichen Werkzeuge und Pakete von **Disconnected by Peer // AT**.
+
+  * [[https://bbs.disconnected-by-peer.at/windows/|Windows-Downloads]] – ZIP-Archive, größere Installer und zugehörige Quellen.
+  * [[https://bbs.disconnected-by-peer.at/linux/|Linux-Downloads]] – portable Werkzeuge als tar.gz.
+  * [[https://bbs.disconnected-by-peer.at/debian/|Debian-Paketarchiv]] – die separat gepflegten DEB-Pakete.
+
+[[:de:downloads:start|Deutsch]] · [[:en:downloads:start|English]]
+
+===== IniMod =====
+
+IniMod ist ein allgemeines Kommandozeilenwerkzeug für INI-Dateien. Es kann unabhängig von Mystic in eigenen Sysop-Skripten verwendet werden.
+
+[[https://github.com/geosone/IniMod/releases/tag/v1.0-portable.1|Geprüftes Release: IniMod 1.0 – portable Builds 1]] · [[https://github.com/geosone/IniMod|Quellcode]] · [[https://github.com/geosone/IniMod/actions/runs/41210093732|Build und Tests]]
+
+^ Plattform ^ Auswahl ^ Inhalt ^
+| Windows | x86 oder x64 | ''inimod.exe'' und ''README.txt'' im ZIP |
+| Linux | i386, amd64, armhf oder arm64 | ''inimod'' und ''README.txt'' im tar.gz |
+
+Entpacke die passende Datei und lege das Programm in den gewünschten Ordner, zum Beispiel ''C:\Mystic'' oder ''/opt/mystic''. IniMod benötigt keine MSI-/DEB-Installation und keine Änderung am systemweiten PATH. Der Programmname enthält keine Architektur-Endung.
+
+==== Geprüfte Systeme ====
+
+Derselbe Linux-Build wurde auf Debian 11 Bullseye, Debian 12 Bookworm, Debian 13 Trixie sowie Ubuntu 24.04 und 26.04 getestet, jeweils für alle vier angebotenen Architekturen. i386 wurde dabei mit der 32-Bit-libc auf einem amd64-Kernel ausgeführt; daraus folgt keine Unterstützung einer vollständigen i386-Ubuntu-Installation durch den Mystic-Installer.
+
+Die Windows-Builds wurden einschließlich UTF-8 und Programmpfaden mit Leerzeichen geprüft. Die vorhandenen Befehls- und Optionsnamen bleiben erhalten. ''SHA256SUMS'' und ein Build-Bericht stehen beim GitHub-Release; im lokalen Download-Verzeichnis heißt die Prüfsummendatei ''SHA256SUMS-IniMod''.
+
+==== Beispiel ====
+
+<code>
+inimod w settings.ini -s General -k Name -v Example --silent
+inimod r settings.ini -s General -k Name --silent
+</code>
+
+Aus PowerShell im gleichen Ordner ''./inimod.exe'' verwenden; unter Linux ''./inimod'', wenn das Programm nicht im PATH liegt. Hinweise zu Herkunft und Lizenzen stehen in der beigefügten README.
+
+===== Mystic-Werkzeuge in Entwicklung =====
+
+  * [[https://github.com/geosone/mdatmod|mdatmod]] – Pascal-Werkzeug für versionsgeprüfte Mystic-DAT-Dateien; aktuell ein lesender Forschungsstand, kein freigegebener DAT-Schreiber.
+  * [[https://github.com/geosone/mpemtrans|mpemtrans]] – Anpassung des PEM-/cryptlib-Konverters für Linux und Windows; noch kein freigegebener Konverter für produktive Zertifikate.
+
+Beide Werkzeuge werden in eigenen Repositories gepflegt. Darstellung und Theme-Assets gehören ins Theme-Projekt; Installation und Konfiguration zu mysticd.
