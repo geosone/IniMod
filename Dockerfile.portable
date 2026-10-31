@@ -1,4 +1,7 @@
 FROM debian:bullseye-slim AS builder
+# Bullseye LTS security packages moved to the official archive. Disable only
+# archive metadata freshness; Debian signature verification remains enabled.
+RUN printf 'deb http://deb.debian.org/debian bullseye main\ndeb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main\n' > /etc/apt/sources.list
 RUN apt-get update && apt-get install -y --no-install-recommends libc6-dev fp-compiler fp-units-fcl fp-units-base lazarus-src make python3 ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /build
 COPY . .

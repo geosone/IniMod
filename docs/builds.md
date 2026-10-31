@@ -36,3 +36,7 @@ run and source commit, with corresponding source and SHA256SUMS alongside them.
 The i386 executable is tested on an amd64 kernel with the distribution-provided
 32-bit libc compatibility runtime. This does not claim a full i386 Ubuntu
 installation image or i386 support in the Mystic installer.
+
+Bullseye security dependencies are fetched from archive.debian.org because
+their original pool URLs returned 404. Only archived metadata freshness is
+disabled for that source; Debian package signature checks remain enabled.
