@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_build:
+	$(MAKE) all
+
+override_dh_auto_test:
+	python3 tests/test_cli.py build/inimod
+
+override_dh_auto_install:
+	install -D -m 0755 build/inimod debian/inimod/usr/bin/inimod
+
+override_dh_auto_clean:
+	$(MAKE) clean

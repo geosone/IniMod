@@ -1,0 +1,3 @@
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends fp-compiler fp-units-fcl fp-units-base lazarus-src make binutils debhelper dpkg-dev ca-certificates git && rm -rf /var/lib/apt/lists/*
+WORKDIR /build

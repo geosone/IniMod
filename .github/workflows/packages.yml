@@ -1,0 +1,29 @@
+name: IniMod packages
+on:
+  push:
+    branches: [master, debian/stable]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  debian:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [bookworm, trixie]
+        target:
+          - {arch: amd64, platform: linux/amd64}
+          - {arch: arm64, platform: linux/arm64}
+          - {arch: armhf, platform: linux/arm/v7}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build and test common Debian recipe
+        run: docker buildx build --platform '${{ matrix.target.platform }}' --build-arg DEBIAN_SUITE='${{ matrix.suite }}' --output type=local,dest=out -f Dockerfile.debian .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inimod-${{ matrix.suite }}-${{ matrix.target.arch }}
+          path: out/*
