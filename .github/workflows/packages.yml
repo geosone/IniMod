@@ -1,7 +1,7 @@
 name: IniMod packages
 on:
   push:
-    branches: [master, debian/stable]
+    branches: [master]
   pull_request:
   workflow_dispatch:
 concurrency:
@@ -59,6 +59,11 @@ jobs:
           ./Build-Windows.ps1 -LazarusDirectory "$env:RUNNER_TEMP/lazarus" -OutputDirectory "$env:RUNNER_TEMP/native" -Architecture '${{ matrix.target.arch }}'
           python tests/test_cli.py "$env:RUNNER_TEMP/native/inimod.exe"
           if ($LASTEXITCODE) { throw 'Native command regression test failed.' }
+          $spaced = Join-Path $env:RUNNER_TEMP 'command with spaces'
+          New-Item -ItemType Directory $spaced | Out-Null
+          Copy-Item "$env:RUNNER_TEMP/native/inimod.exe" $spaced
+          python tests/test_cli.py (Join-Path $spaced 'inimod.exe')
+          if ($LASTEXITCODE) { throw 'Spaced executable path regression test failed.' }
       - uses: actions/upload-artifact@v4
         with:
           name: inimod-native-${{ matrix.target.arch }}
@@ -93,3 +98,28 @@ jobs:
           path: |
             ${{ runner.temp }}/package/*.msi
             ${{ runner.temp }}/package/SHA256SUMS
+
+  windows-lifecycle:
+    needs: windows-msi
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86, x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: inimod-msi-${{ matrix.arch }}
+          path: ${{ runner.temp }}/package
+      - name: Install, repair, exercise and uninstall
+        shell: pwsh
+        run: |
+          $package = "$env:RUNNER_TEMP/package/inimod-1.0-windows-${{ matrix.arch }}.msi"
+          $hash = ((Get-Content "$env:RUNNER_TEMP/package/SHA256SUMS") -split '\s+')[0]
+          ./tests/Test-WindowsMsi.ps1 -PackagePath $package -ExpectedSHA256 $hash -TestDirectory "$env:RUNNER_TEMP/msi-test" -Architecture '${{ matrix.arch }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lifecycle-${{ matrix.arch }}
+          path: ${{ runner.temp }}/msi-test/*.log

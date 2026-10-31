@@ -3,6 +3,6 @@ FROM debian:${DEBIAN_SUITE}-slim AS builder
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential fp-compiler fp-units-fcl fp-units-base lazarus-src make binutils debhelper dpkg-dev python3 ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /build/source
 COPY . .
-RUN dpkg-buildpackage -us -uc && mkdir /output && cp /build/*.deb /build/*.dsc /build/*.tar.xz /build/*.changes /build/*.buildinfo /output/
+RUN dpkg-buildpackage -us -uc && apt-get install -y /build/inimod_*.deb && python3 tests/test_cli.py /usr/bin/inimod && mkdir /output && cp /build/*.deb /build/*.dsc /build/*.tar.xz /build/*.changes /build/*.buildinfo /output/
 FROM scratch
 COPY --from=builder /output/ /

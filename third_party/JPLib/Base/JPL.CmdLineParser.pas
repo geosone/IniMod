@@ -1,4 +1,4 @@
-﻿unit JPL.CmdLineParser;
+unit JPL.CmdLineParser;
 {
   Jacek Pazera
   http://www.pazera-software.com
@@ -2038,7 +2038,7 @@ begin
           end
 
           else
-           if (CmdLine[i - 1] = ' ') or (CmdLine[i - 1] = EqChar) then State := psString; // -opt="some value"
+           if (i = 2) or (CmdLine[i - 1] = ' ') or (CmdLine[i - 1] = EqChar) then State := psString; // -opt="some value"
 
         end;
 
