@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="BADCDE62-4630-5A01-83E7-CD876C606897" Name="IniMod 1.0 (x64)" Language="1033" Version="1.0.0" Manufacturer="Disconnected by Peer AT" UpgradeCode="E83112C5-9153-5460-AF2D-D405CABBBE0F">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+    <Media Id="1" Cabinet="inimod.cab" EmbedCab="yes" />
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="IniMod" />
+      </Directory>
+    </Directory>
+    <Feature Id="Main" Title="IniMod command and license notices" Level="1" />
+  </Product>
+</Wix>

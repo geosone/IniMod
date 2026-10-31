@@ -15,7 +15,9 @@ License: public-domain-with-notices
  references, attribution and any component-specific terms are retained in the
  Pascal source files. This is not a relicensing of third-party contributions.
 
-Files: debian/* tests/* Makefile Dockerfile.build
+Files: debian/* tests/* powershell/* packaging/* .github/*
+ Build-Windows.ps1 New-WindowsMsi.ps1 Makefile Dockerfile.* AGENTS.md
+ PSScriptAnalyzerSettings.psd1
 Copyright: 2026 Disconnected by Peer AT contributors
 License: GPL-3+
  This packaging is free software: you can redistribute it and/or modify it

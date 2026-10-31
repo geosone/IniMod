@@ -126,3 +126,18 @@ How to build:
 ## Releases
 
 2021.02.02 - Version 1.0
+
+## Maintained packages
+
+The maintained fork builds Debian packages and native Windows x86/x64 MSI
+packages through GitHub Actions. The common `debian/` recipe serves Debian
+12/13 and amd64/arm64/armhf; it can also be used by Jenkins Debian Glue on
+debdev. Build and test status must be checked before publishing downloads.
+
+The Linux fork accepts absolute filenames beginning with `/` without treating
+them as Windows-style options. Existing commands and option names are retained.
+The required JPLib Base/Logging snapshot is vendored and pinned in
+`third_party/JPLib/SNAPSHOT.txt`; no retired download website is required.
+
+Application/package builds belong in this repository. Mystic installation and
+configuration integration belong in mysticd; BBS theme assets in mystic-theme.

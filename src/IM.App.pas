@@ -50,6 +50,11 @@ const
   SEP_LINE = '-------------------------------------------------';
 begin
 
+  {$IFDEF UNIX}
+  // A leading slash is an absolute filename on Unix, not an option prefix.
+  ShortOptPrefixes := ['-'];
+  {$ENDIF}
+
   AppName := 'IniMod';
   MajorVersion := 1;
   MinorVersion := 0;

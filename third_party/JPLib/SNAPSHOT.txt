@@ -1,4 +1,4 @@
 Repository: https://github.com/jackdp/JPLib
 Commit: f7ee7afde9ed6f65789dea31e484941bb428dc49
-Included: Base/, jp.inc and Readme.md (unmodified source snapshot).
+Included: Base/, Logging/, jp.inc and Readme.md (unmodified source snapshot).
 See the upstream README and original unit headers for attribution and terms.

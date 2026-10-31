@@ -4,6 +4,9 @@ on:
     branches: [master, debian/stable]
   pull_request:
   workflow_dispatch:
+concurrency:
+  group: packages-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -27,3 +30,63 @@ jobs:
         with:
           name: inimod-${{ matrix.suite }}-${{ matrix.target.arch }}
           path: out/*
+
+  windows-build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - {arch: x86, bits: '32', suffix: win32}
+          - {arch: x64, bits: '64', suffix: win64}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lazarus and Free Pascal
+        shell: pwsh
+        run: |
+          $url = 'https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%20${{ matrix.target.bits }}%20bits/Lazarus%204.4/lazarus-4.4-fpc-3.2.2-${{ matrix.target.suffix }}.exe'
+          $installer = Join-Path $env:RUNNER_TEMP 'lazarus-setup.exe'
+          Invoke-WebRequest $url -OutFile $installer
+          $destination = Join-Path $env:RUNNER_TEMP 'lazarus'
+          $process = Start-Process $installer -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', ('/DIR=' + $destination)) -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Lazarus installation failed: $($process.ExitCode)" }
+      - name: Build and exercise native executable
+        shell: pwsh
+        run: |
+          ./Build-Windows.ps1 -LazarusDirectory "$env:RUNNER_TEMP/lazarus" -OutputDirectory "$env:RUNNER_TEMP/native" -Architecture '${{ matrix.target.arch }}'
+          python tests/test_cli.py "$env:RUNNER_TEMP/native/inimod.exe"
+          if ($LASTEXITCODE) { throw 'Native command regression test failed.' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inimod-native-${{ matrix.target.arch }}
+          path: |
+            ${{ runner.temp }}/native/inimod.exe
+            ${{ runner.temp }}/native/*.md
+            ${{ runner.temp }}/native/*.txt
+            ${{ runner.temp }}/native/COPYING*
+            ${{ runner.temp }}/native/SHA256SUMS
+  windows-msi:
+    needs: windows-build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86, x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: inimod-native-${{ matrix.arch }}
+          path: ${{ runner.temp }}/native
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends wixl
+      - name: Build MSI
+        shell: pwsh
+        run: |
+          $hash = ((Get-Content "$env:RUNNER_TEMP/native/SHA256SUMS") -split '\s+')[0]
+          ./New-WindowsMsi.ps1 -BinaryDirectory "$env:RUNNER_TEMP/native" -OutputDirectory "$env:RUNNER_TEMP/package" -ExpectedSHA256 $hash -Architecture '${{ matrix.arch }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inimod-msi-${{ matrix.arch }}
+          path: |
+            ${{ runner.temp }}/package/*.msi
+            ${{ runner.temp }}/package/SHA256SUMS
