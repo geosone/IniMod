@@ -6,10 +6,10 @@ manually built downloads and does not rely on the retired upstream binary site.
 
 | Target | Build | Runtime tests | Distribution |
 | --- | --- | --- | --- |
-| Linux i386 | Debian 12 / FPC 3.2.2 | same archive on Debian 12 and 13 | tar.gz |
-| Linux amd64 | Debian 12 / FPC 3.2.2 | same archive on Debian 12 and 13 | tar.gz |
-| Linux arm64 | Debian 12 / FPC 3.2.2 under QEMU | same archive on Debian 12 and 13 | tar.gz |
-| Linux armhf | Debian 12 / FPC 3.2.2 under QEMU | same archive on Debian 12 and 13 | tar.gz |
+| Linux i386 | Debian 11 / distro FPC | same archive on Debian 11/12/13 and Ubuntu 24.04/26.04 | tar.gz |
+| Linux amd64 | Debian 11 / distro FPC | same archive on Debian 11/12/13 and Ubuntu 24.04/26.04 | tar.gz |
+| Linux arm64 | Debian 11 / distro FPC under QEMU | same archive on Debian 11/12/13 and Ubuntu 24.04/26.04 | tar.gz |
+| Linux armhf | Debian 11 / distro FPC under QEMU | same archive on Debian 11/12/13 and Ubuntu 24.04/26.04 | tar.gz |
 | Windows x86 | Lazarus 4.4 / FPC 3.2.2 | real CLI and spaced executable path | ZIP |
 | Windows x64 | Lazarus 4.4 / FPC 3.2.2 | real CLI and spaced executable path | ZIP |
 
@@ -32,3 +32,7 @@ Traceability is not yet a claim of bit-for-bit reproducibility: distribution
 package updates and compiler/container inputs must also be pinned and compared
 before making that claim. Published downloads should identify the exact workflow
 run and source commit, with corresponding source and SHA256SUMS alongside them.
+
+The i386 executable is tested on an amd64 kernel with the distribution-provided
+32-bit libc compatibility runtime. This does not claim a full i386 Ubuntu
+installation image or i386 support in the Mystic installer.

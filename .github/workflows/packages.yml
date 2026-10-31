@@ -16,10 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - {arch: amd64, platform: linux/amd64}
-          - {arch: i386, platform: linux/386}
-          - {arch: arm64, platform: linux/arm64}
-          - {arch: armhf, platform: linux/arm/v7}
+          - {arch: amd64, platform: linux/amd64, runtime_platform: linux/amd64}
+          - {arch: i386, platform: linux/386, runtime_platform: linux/amd64}
+          - {arch: arm64, platform: linux/arm64, runtime_platform: linux/arm64}
+          - {arch: armhf, platform: linux/arm/v7, runtime_platform: linux/arm/v7}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3
@@ -36,12 +36,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [bookworm, trixie]
+        image: ['debian:bullseye-slim', 'debian:bookworm-slim', 'debian:trixie-slim', 'ubuntu:24.04', 'ubuntu:26.04']
         target:
-          - {arch: amd64, platform: linux/amd64}
-          - {arch: i386, platform: linux/386}
-          - {arch: arm64, platform: linux/arm64}
-          - {arch: armhf, platform: linux/arm/v7}
+          - {arch: amd64, platform: linux/amd64, runtime_platform: linux/amd64}
+          - {arch: i386, platform: linux/386, runtime_platform: linux/amd64}
+          - {arch: arm64, platform: linux/arm64, runtime_platform: linux/arm64}
+          - {arch: armhf, platform: linux/arm/v7, runtime_platform: linux/arm/v7}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3
@@ -49,12 +49,12 @@ jobs:
         with:
           name: inimod-linux-${{ matrix.target.arch }}
           path: out
-      - name: Exercise the same archive on both Debian generations
+      - name: Exercise the same archive on all selected systems
         run: |
           mkdir runtime
           tar -xzf out/inimod-1.0-linux-${{ matrix.target.arch }}.tar.gz -C runtime
           test "$(find runtime -maxdepth 1 -type f | wc -l)" = 2
-          docker run --rm --platform '${{ matrix.target.platform }}' -v "$PWD:/work:ro" -w /work debian:${{ matrix.suite }}-slim sh -ec 'apt-get update && apt-get install -y --no-install-recommends python3 && python3 tests/test_cli.py /work/runtime/inimod'
+          docker run --rm --platform '${{ matrix.target.runtime_platform }}' -e TOOL_ARCH='${{ matrix.target.arch }}' -v "$PWD:/work:ro" -w /work '${{ matrix.image }}' sh -ec 'if [ "$TOOL_ARCH" = i386 ]; then dpkg --add-architecture i386; fi; apt-get update; if [ "$TOOL_ARCH" = i386 ]; then apt-get install -y --no-install-recommends python3 libc6:i386; else apt-get install -y --no-install-recommends python3; fi; python3 tests/test_cli.py /work/runtime/inimod'
   windows-build:
     runs-on: windows-latest
     strategy:
