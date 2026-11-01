@@ -1,0 +1,19 @@
+====== IniMod ======
+
+General command-line INI editor, independent of Mystic. Existing commands and options are retained.
+
+**Status:** Released: portable builds 1.
+
+[[https://github.com/geosone/IniMod|Source and development]]
+
+[[:de:projects:inimod|Deutsch]] · [[:en:projects:inimod|English]]
+
+===== Downloads and tests =====
+
+[[:en:downloads:start|Download instructions]] · [[https://github.com/geosone/IniMod/releases/tag/v1.0-portable.1|GitHub release]] · [[https://github.com/geosone/IniMod/actions/runs/41210093732|Build and tests]]
+
+Windows: ZIP for x86/x64. Linux: tar.gz for i386, amd64, armhf and arm64. Each archive contains only the executable and README.txt. No MSI/DEB installation or global PATH change.
+
+Linux archives were tested on Debian 11/12/13 and Ubuntu 24.04/26.04. i386 ran with 32-bit libc on an amd64 kernel; these tool tests do not change the Mystic installer platform qualifications.
+
+[[:en:projects:start|Project overview]]
