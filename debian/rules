@@ -6,7 +6,9 @@ override_dh_auto_build:
 	$(MAKE) all
 
 override_dh_auto_test:
-	python3 tests/test_cli.py build/inimod
+	# Minimal pbuilder chroots default to C; the CLI UTF-8 round trip needs
+	# a UTF-8 locale. C.UTF-8 is provided without generating regional locales.
+	LC_ALL=C.UTF-8 python3 tests/test_cli.py build/inimod
 
 override_dh_auto_install:
 	install -D -m 0755 build/inimod debian/inimod/usr/bin/inimod
