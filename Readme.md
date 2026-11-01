@@ -132,15 +132,23 @@ How to build:
 The maintained fork builds native Linux amd64/arm64/armhf tar.gz archives and
 Windows x86/x64 ZIP archives through GitHub Actions. Each archive contains
 exactly one executable (`inimod` or `inimod.exe`) and README.txt, including
-notices. No MSI, DEB, service or global PATH change is installed.
+notices. The Mystic installer continues to use only these portable archives.
 
 The executable name never includes an architecture suffix. Extract it directly
 into the Mystic directory to preserve old Sysop script calls. The fork retains
 existing commands/options, fixes absolute Linux filenames and quoted executable
 paths on Windows, and tests both ordinary and spaced executable paths.
 
-Debian/MSI recipes were developed and then retired at the operator's request.
-They remain in legacy/ only for review; active CI does not invoke them.
+Additional DEB and MSI packages are built by the same workflow for operators
+who prefer system installation. DEBs install `/usr/bin/inimod`; MSIs install
+under Program Files and do not change PATH. The Debian source recipe is shared
+across architectures. CI builds and tests DEBs and tests MSI installation,
+repair, real INI editing and removal on disposable Windows runners.
+
+Build a DEB with `dpkg-buildpackage -us -uc` or `Dockerfile.debian`. Build an MSI
+on Linux with `pwsh -File New-WindowsMsi.ps1`, supplying the native executable
+directory, its expected SHA-256, a fresh output directory and x86/x64 target.
+The older recipes remain under legacy/ as historical reference.
 The required JPLib snapshot and its local parser fix are documented in
 third_party/JPLib/SNAPSHOT.txt. No retired download website is required.
 

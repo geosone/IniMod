@@ -125,3 +125,59 @@ jobs:
           path: |
             ${{ runner.temp }}/archive/*.zip
             ${{ runner.temp }}/archive/SHA256SUMS
+
+  debian-packages:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linux/amd64, linux/386, linux/arm64, linux/arm/v7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build and test Debian package
+        run: docker buildx build --platform '${{ matrix.platform }}' --output type=local,dest=debs -f Dockerfile.debian .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inimod-debian-${{ strategy.job-index }}
+          path: debs/*
+  windows-msi:
+    needs: windows-build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86, x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: inimod-native-${{ matrix.arch }}
+          path: native
+      - run: sudo apt-get update && sudo apt-get install -y wixl
+      - name: Package verified native binary
+        shell: pwsh
+        run: |
+          $hash = ((Get-Content native/SHA256SUMS) -split '\s+')[0]
+          ./New-WindowsMsi.ps1 -BinaryDirectory "$PWD/native" -OutputDirectory "$PWD/msi" -ExpectedSHA256 $hash -Architecture '${{ matrix.arch }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inimod-msi-${{ matrix.arch }}
+          path: msi/*.msi
+  windows-msi-test:
+    needs: windows-msi
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x86, x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: inimod-msi-${{ matrix.arch }}
+          path: msi
+      - name: Install, test, repair and uninstall
+        shell: pwsh
+        run: |
+          $package = (Get-ChildItem msi/*.msi).FullName
+          ./Test-WindowsMsi.ps1 -PackagePath $package -ExpectedSHA256 (Get-FileHash $package).Hash -TestDirectory "$env:RUNNER_TEMP/inimod-msi-test" -Architecture '${{ matrix.arch }}'

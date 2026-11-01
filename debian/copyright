@@ -1,0 +1,32 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: IniMod
+Source: https://github.com/jackdp/IniMod
+
+Files: src/* doc_img/* Readme.md *.bat
+Copyright: Jacek Pazera
+License: public-domain
+ The upstream Readme.md License section states that the source and compiled
+ binaries are public domain and may be used without limitations.
+
+Files: third_party/JPLib/*
+Copyright: Jacek Pazera and the authors credited in the individual source files
+License: public-domain-with-notices
+ Jacek Pazera dedicates his own JPLib work to the public domain. Original
+ references, attribution and any component-specific terms are retained in the
+ Pascal source files. This is not a relicensing of third-party contributions.
+
+Files: debian/* tests/* powershell/* packaging/* .github/*
+ Build-Windows.ps1 New-WindowsMsi.ps1 Makefile Dockerfile.* AGENTS.md
+ PSScriptAnalyzerSettings.psd1
+Copyright: 2026 Disconnected by Peer AT contributors
+License: GPL-3+
+ This packaging is free software: you can redistribute it and/or modify it
+ under the GNU General Public License, version 3 or any later version.
+ On Debian systems the complete GPL version 3 is available at
+ /usr/share/common-licenses/GPL-3.
+
+Comment:
+ The executable also links the Free Pascal runtime and Lazarus LazUtils under
+ their modified LGPL licenses with static-linking exceptions. Their original
+ notices are retained in their corresponding Debian source packages. Packaging
+ under the GPL does not change the upstream public-domain dedication.
