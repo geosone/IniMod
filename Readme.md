@@ -141,7 +141,7 @@ paths on Windows, and tests both ordinary and spaced executable paths.
 
 Additional DEB and MSI packages are built by the same workflow for operators
 who prefer system installation. DEBs install `/usr/bin/inimod`; MSIs install
-under Program Files and do not change PATH. The Debian source recipe is shared
+under Program Files and append their own directory to system PATH (removed on uninstall). The Debian source recipe is shared
 across architectures. CI builds and tests DEBs and tests MSI installation,
 repair, real INI editing and removal on disposable Windows runners.
 

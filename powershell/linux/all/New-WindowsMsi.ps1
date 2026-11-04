@@ -45,8 +45,7 @@ $feature = $document.SelectSingleNode('//w:Feature', $namespace)
 for ($i = 0; $i -lt $files.Count; $i++) {
     $component = $document.CreateElement('Component', $document.DocumentElement.NamespaceURI)
     $component.SetAttribute('Id', "Payload$i")
-    # Fixed product code: repair uses the embedded cabinet; a new package version
-    # requires new product/component identity and explicit upgrade qualification.
+    # Major upgrades retain the stable upgrade code and file component identity.
     $component.SetAttribute('Guid', '*')
     $component.SetAttribute('Win64', $(if ($Architecture -eq 'x64') {
                 'yes'
@@ -58,6 +57,22 @@ for ($i = 0; $i -lt $files.Count; $i++) {
     $file.SetAttribute('Source', (Join-Path $payload $files[$i]))
     $file.SetAttribute('KeyPath', 'yes')
     $null = $component.AppendChild($file)
+    if ($files[$i] -eq 'inimod.exe') {
+        $environment = $document.CreateElement('Environment', $document.DocumentElement.NamespaceURI)
+        $attributes = @{
+            Id        = 'SystemPath'
+            Name      = 'PATH'
+            Action    = 'set'
+            Part      = 'last'
+            Value     = '[INSTALLFOLDER]'
+            System    = 'yes'
+            Permanent = 'no'
+        }
+        foreach ($entry in $attributes.GetEnumerator()) {
+            $environment.SetAttribute($entry.Key, $entry.Value)
+        }
+        $null = $component.AppendChild($environment)
+    }
     $null = $directory.AppendChild($component)
     $reference = $document.CreateElement('ComponentRef', $document.DocumentElement.NamespaceURI)
     $reference.SetAttribute('Id', "Payload$i")
@@ -65,11 +80,12 @@ for ($i = 0; $i -lt $files.Count; $i++) {
 }
 $wxs = Join-Path $output 'package.wxs'
 $document.Save($wxs)
-$msi = Join-Path $output "inimod-1.0-windows-$Architecture.msi"
+$msi = Join-Path $output "inimod-1.0.1-windows-$Architecture.msi"
 & wixl -a $Architecture -o $msi $wxs
 if ($LASTEXITCODE) {
     throw 'MSI packaging failed.'
 }
+& (Join-Path $root 'packaging/finalize_msi_path.ps1') -Package $msi -Component Payload0
 $hash = (Get-FileHash $msi).Hash.ToLowerInvariant()
 [IO.File]::WriteAllText((Join-Path $output 'SHA256SUMS'), "$hash  $([IO.Path]::GetFileName($msi))`n")
 [pscustomobject]@{

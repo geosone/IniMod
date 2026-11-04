@@ -11,6 +11,8 @@ $ErrorActionPreference = 'Stop'
 if (!$IsWindows -or (Get-FileHash $PackagePath).Hash -ine $ExpectedSHA256) {
     throw 'A Windows test VM and a matching MSI checksum are required.'
 }
+. (Join-Path $PSScriptRoot 'packaging/test_windows_path.ps1')
+$beforePath = Get-TestMachinePath
 $programs = if ($Architecture -eq 'x64') {
     $env:ProgramW6432
 } elseif ($env:ProgramW6432) {
@@ -27,7 +29,10 @@ if ((Test-Path $installed) -or (Test-Path $TestDirectory)) {
 }
 $null = New-Item -ItemType Directory $TestDirectory
 $msi = [IO.Path]::GetFullPath($PackagePath)
-function Invoke-Msi([string]$Mode, [string]$LogName) {
+function Invoke-Msi(
+    [string]$Mode,
+    [string]$LogName
+) {
     $arguments = @($Mode, ('"' + $msi + '"'), '/qn', '/norestart', '/L*v', ('"' + (Join-Path $TestDirectory $LogName) + '"'))
     $process = Start-Process msiexec.exe -ArgumentList $arguments -Wait -PassThru
     if ($process.ExitCode -ne 0) {
@@ -39,12 +44,15 @@ try {
     Invoke-Msi '/i' 'install.log'
     $active = $true
     $exe = Join-Path $installed 'inimod.exe'
+    Assert-TestToolPath -Directory $installed -Before $beforePath
+    Assert-TestToolDiscovery -Executable $exe -WorkingDirectory $TestDirectory
     $hash = (Get-FileHash $exe).Hash
     Remove-Item $exe
     Invoke-Msi '/fa' 'repair.log'
     if ((Get-FileHash $exe).Hash -ne $hash) {
         throw 'Repair failed to restore the executable.'
     }
+    Assert-TestToolPath -Directory $installed -Before $beforePath
     $config = Join-Path $TestDirectory 'settings.ini'
     [IO.File]::WriteAllText($config, "; preserved comment`n[General]`nKeep=yes`n")
     & $exe w $config -s General -k Name -v 'Native test' --silent
@@ -61,6 +69,7 @@ try {
     }
     Invoke-Msi '/x' 'uninstall.log'
     $active = $false
+    Assert-TestToolPath -Directory $installed -Before $beforePath -Removed
     if ((Test-Path $exe) -or [IO.File]::ReadAllText($config) -ne $original) {
         throw 'Uninstall left a runtime file or changed external configuration.'
     }
