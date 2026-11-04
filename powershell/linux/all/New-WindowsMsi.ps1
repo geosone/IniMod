@@ -57,22 +57,6 @@ for ($i = 0; $i -lt $files.Count; $i++) {
     $file.SetAttribute('Source', (Join-Path $payload $files[$i]))
     $file.SetAttribute('KeyPath', 'yes')
     $null = $component.AppendChild($file)
-    if ($files[$i] -eq 'inimod.exe') {
-        $environment = $document.CreateElement('Environment', $document.DocumentElement.NamespaceURI)
-        $attributes = @{
-            Id        = 'SystemPath'
-            Name      = 'PATH'
-            Action    = 'set'
-            Part      = 'last'
-            Value     = '[INSTALLFOLDER]'
-            System    = 'yes'
-            Permanent = 'no'
-        }
-        foreach ($entry in $attributes.GetEnumerator()) {
-            $environment.SetAttribute($entry.Key, $entry.Value)
-        }
-        $null = $component.AppendChild($environment)
-    }
     $null = $directory.AppendChild($component)
     $reference = $document.CreateElement('ComponentRef', $document.DocumentElement.NamespaceURI)
     $reference.SetAttribute('Id', "Payload$i")
