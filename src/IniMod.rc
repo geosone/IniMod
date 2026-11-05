@@ -1,0 +1,33 @@
+// Version resource source for IniMod.res, which IniMod.lpr links with {$R *.res}.
+// The Windows build calls fpc directly, so Lazarus never regenerates the .res
+// from IniMod.lpi. After changing the version here, IM.App.pas and IniMod.lpi,
+// regenerate it with:
+//   x86_64-w64-mingw32-windres -O res -i src/IniMod.rc -o src/IniMod.res
+// Windows Installer compares FILEVERSION during MSI upgrades.
+1 VERSIONINFO
+FILEVERSION 1,0,3,0
+PRODUCTVERSION 1,0,3,0
+FILEOS 0x4
+FILETYPE 0x1
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "Comments", "https://www.pazera-software.com"
+      VALUE "CompanyName", "Jacek Pazera"
+      VALUE "FileDescription", "IniMod"
+      VALUE "FileVersion", "1.0.3.0"
+      VALUE "InternalName", "IniMod"
+      VALUE "LegalCopyright", "Jacek Pazera"
+      VALUE "LegalTrademarks", "Jacek Pazera"
+      VALUE "OriginalFilename", "IniMod.exe"
+      VALUE "ProductName", "IniMod"
+      VALUE "ProductVersion", "1.0.3"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END

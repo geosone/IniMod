@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="IniMod 1.0.2 (x64)" Language="1033" Version="1.0.2" Manufacturer="Disconnected by Peer AT" UpgradeCode="E83112C5-9153-5460-AF2D-D405CABBBE0F">
+  <Product Id="*" Name="IniMod 1.0.3 (x64)" Language="1033" Version="1.0.3" Manufacturer="Disconnected by Peer AT" UpgradeCode="E83112C5-9153-5460-AF2D-D405CABBBE0F">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer IniMod MSI is already installed." />
     <Media Id="1" Cabinet="inimod.cab" EmbedCab="yes" />

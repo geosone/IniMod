@@ -1,3 +1,13 @@
+inimod (1.0.3) unstable; urgency=medium
+
+  * The Windows executable carries version resource 1.0.3.0, generated from
+    src/IniMod.rc; 1.0.2 still embedded 1.0.0.0.
+  * The MSI authors that file version, so a major upgrade from 1.0.1 or 1.0.2
+    replaces inimod.exe and keeps the machine PATH entry.
+  * No change to the Debian command or its installed files.
+
+ -- Disconnected by Peer AT <geos_one@disconnected-by-peer.at>  Thu, 05 Nov 2026 18:00:00 +0100
+
 inimod (1.0.2) unstable; urgency=medium
 
   * Release 1.0.2: the program reports 1.0.2, matching the Windows MSI and

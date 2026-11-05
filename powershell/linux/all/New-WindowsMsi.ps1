@@ -21,6 +21,29 @@ $machine = [BitConverter]::ToUInt16($bytes, $header + 4)
 if (($Architecture -eq 'x64' -and $machine -ne 0x8664) -or ($Architecture -eq 'x86' -and $machine -ne 0x14c)) {
     throw 'PE machine type differs from the MSI target.'
 }
+
+# Read the executable's file version from its VS_FIXEDFILEINFO record, which
+# starts with the signature 0xFEEF04BD (Microsoft VS_FIXEDFILEINFO): offset 8
+# holds dwFileVersionMS (major << 16 | minor), offset 12 dwFileVersionLS
+# (revision << 16 | build), both little-endian UInt32. wixl leaves File.Version
+# empty; Windows Installer then treats the new file as unversioned, keeps an
+# installed versioned inimod.exe and skips its component, including the PATH
+# entry, during a major upgrade.
+$signature = [byte[]](0xBD, 0x04, 0xEF, 0xFE)
+$offset = -1
+for ($i = 0; $i -le $bytes.Length - 16; $i++) {
+    if ($bytes[$i] -eq $signature[0] -and $bytes[$i + 1] -eq $signature[1] -and
+        $bytes[$i + 2] -eq $signature[2] -and $bytes[$i + 3] -eq $signature[3]) {
+        $offset = $i
+        break
+    }
+}
+if ($offset -lt 0) {
+    throw 'The executable has no version resource.'
+}
+$versionMS = [BitConverter]::ToUInt32($bytes, $offset + 8)
+$versionLS = [BitConverter]::ToUInt32($bytes, $offset + 12)
+$fileVersion = '{0}.{1}.{2}.{3}' -f ($versionMS -shr 16), ($versionMS -band 0xffff), ($versionLS -shr 16), ($versionLS -band 0xffff)
 if (Test-Path $OutputDirectory) {
     throw 'Choose a fresh output directory.'
 }
@@ -42,6 +65,12 @@ $namespace = [Xml.XmlNamespaceManager]::new($document.NameTable)
 $namespace.AddNamespace('w', $document.DocumentElement.NamespaceURI)
 $directory = $document.SelectSingleNode('//w:Directory[@Id="INSTALLFOLDER"]', $namespace)
 $feature = $document.SelectSingleNode('//w:Feature', $namespace)
+
+# The program, MSI and archives share one release version.
+$productVersion = $document.SelectSingleNode('//w:Product', $namespace).GetAttribute('Version')
+if (!$fileVersion.StartsWith($productVersion + '.')) {
+    throw "Executable version $fileVersion does not match MSI version $productVersion."
+}
 for ($i = 0; $i -lt $files.Count; $i++) {
     $component = $document.CreateElement('Component', $document.DocumentElement.NamespaceURI)
     $component.SetAttribute('Id', "Payload$i")
@@ -56,6 +85,9 @@ for ($i = 0; $i -lt $files.Count; $i++) {
     $file.SetAttribute('Id', "File$i")
     $file.SetAttribute('Source', (Join-Path $payload $files[$i]))
     $file.SetAttribute('KeyPath', 'yes')
+    if ($files[$i] -eq 'inimod.exe') {
+        $file.SetAttribute('DefaultVersion', $fileVersion)
+    }
     $null = $component.AppendChild($file)
     $null = $directory.AppendChild($component)
     $reference = $document.CreateElement('ComponentRef', $document.DocumentElement.NamespaceURI)
@@ -64,7 +96,7 @@ for ($i = 0; $i -lt $files.Count; $i++) {
 }
 $wxs = Join-Path $output 'package.wxs'
 $document.Save($wxs)
-$msi = Join-Path $output "inimod-1.0.2-windows-$Architecture.msi"
+$msi = Join-Path $output "inimod-1.0.3-windows-$Architecture.msi"
 & wixl -a $Architecture -o $msi $wxs
 if ($LASTEXITCODE) {
     throw 'MSI packaging failed.'
