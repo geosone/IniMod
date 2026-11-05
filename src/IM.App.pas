@@ -58,8 +58,11 @@ begin
   AppName := 'IniMod';
   MajorVersion := 1;
   MinorVersion := 0;
+  // Fork release 1.0.2: the MSI, archives and Debian package carry the same
+  // three-part version. JPLib's format has no revision token, so append it.
+  RevisionNumber := 2;
   Self.Date := EncodeDate(2021, 02, 02);
-  FullNameFormat := '%AppName% %MajorVersion%.%MinorVersion% [%OSShort% %Bits%-bit] (%AppDate%)';
+  FullNameFormat := '%AppName% %MajorVersion%.%MinorVersion%.' + IntToStr(RevisionNumber) + ' [%OSShort% %Bits%-bit] (%AppDate%)';
   Description := 'Console application for managing INI files.';
   Author := 'Jacek Pazera';
   HomePage := 'https://www.pazera-software.com/products/inimod/';

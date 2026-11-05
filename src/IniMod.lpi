@@ -18,7 +18,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <StringTable Comments="https://www.pazera-software.com" CompanyName="Jacek Pazera" FileDescription="IniMod" InternalName="IniMod" LegalCopyright="Jacek Pazera" LegalTrademarks="Jacek Pazera" OriginalFilename="IniMod.exe" ProductName="IniMod" ProductVersion="1.0"/>
+      <RevisionNr Value="2"/>
+      <StringTable Comments="https://www.pazera-software.com" CompanyName="Jacek Pazera" FileDescription="IniMod" InternalName="IniMod" LegalCopyright="Jacek Pazera" LegalTrademarks="Jacek Pazera" OriginalFilename="IniMod.exe" ProductName="IniMod" ProductVersion="1.0.2"/>
     </VersionInfo>
     <BuildModes Count="5">
       <Item1 Name="Debug Win32" Default="True"/>

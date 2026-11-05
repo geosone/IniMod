@@ -1,3 +1,11 @@
+inimod (1.0.2) unstable; urgency=medium
+
+  * Release 1.0.2: the program reports 1.0.2, matching the Windows MSI and
+    the portable archives. The 1.0.1 MSI still contained program 1.0.
+  * No change to the Debian command or its installed files.
+
+ -- Disconnected by Peer AT <geos_one@disconnected-by-peer.at>  Thu, 05 Nov 2026 16:00:00 +0100
+
 inimod (1.0+packaging2) unstable; urgency=medium
 
   * Release alongside the 1.0.1 Windows MSI, which appends its installation

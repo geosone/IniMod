@@ -14,6 +14,9 @@ def run(*args):
     return result.stdout.strip()
 
 
+# The fork release version must match the MSI, archive and Debian package names.
+assert run("--version").startswith("IniMod 1.0.2 "), run("--version")
+
 with tempfile.TemporaryDirectory(prefix="inimod-test-") as directory:
     path = pathlib.Path(directory) / "settings.ini"
     path.write_text("; retained comment\n[General]\nBaseDir=/opt/mystic\nKeep=yes\n", encoding="utf-8")
@@ -30,4 +33,4 @@ with tempfile.TemporaryDirectory(prefix="inimod-test-") as directory:
     assert "[Temporary]" not in path.read_text(encoding="utf-8-sig")
     invalid = subprocess.run([exe, "invalid-command"], capture_output=True)
     assert invalid.returncode == 2, invalid.returncode
-print("PASS real IniMod read/write, UTF-8, comments, key rename/removal, section removal and syntax exit code.")
+print("PASS IniMod 1.0.2 version, real read/write, UTF-8, comments, key rename/removal, section removal and syntax exit code.")

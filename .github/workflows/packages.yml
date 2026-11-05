@@ -53,7 +53,7 @@ jobs:
       - name: Exercise the same archive on all selected systems
         run: |
           mkdir runtime
-          tar -xzf out/inimod-1.0-linux-${{ matrix.target.arch }}.tar.gz -C runtime
+          tar -xzf out/inimod-1.0.2-linux-${{ matrix.target.arch }}.tar.gz -C runtime
           test "$(find runtime -maxdepth 1 -type f | wc -l)" = 2
           docker run --rm --platform '${{ matrix.target.runtime_platform }}' -e TOOL_ARCH='${{ matrix.target.arch }}' -v "$PWD:/work:ro" -w /work '${{ matrix.image }}' sh -ec '. /etc/os-release; if [ "${VERSION_CODENAME:-}" = bullseye ]; then printf "deb http://deb.debian.org/debian bullseye main\ndeb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main\n" > /etc/apt/sources.list; fi; if [ "$TOOL_ARCH" = i386 ]; then dpkg --add-architecture i386; fi; apt-get update; if [ "$TOOL_ARCH" = i386 ]; then apt-get install -y --no-install-recommends python3 libc6:i386; else apt-get install -y --no-install-recommends python3; fi; python3 tests/test_cli.py /work/runtime/inimod'
   windows-build:
@@ -116,7 +116,7 @@ jobs:
         run: |
           $hash = ((Get-Content "$env:RUNNER_TEMP/native/SHA256SUMS") -split '\s+')[0]
           ./New-WindowsArchive.ps1 -BinaryDirectory "$env:RUNNER_TEMP/native" -OutputDirectory "$env:RUNNER_TEMP/archive" -ExpectedSHA256 $hash -Architecture '${{ matrix.arch }}'
-          Expand-Archive "$env:RUNNER_TEMP/archive/inimod-1.0-windows-${{ matrix.arch }}.zip" "$env:RUNNER_TEMP/extracted archive"
+          Expand-Archive "$env:RUNNER_TEMP/archive/inimod-1.0.2-windows-${{ matrix.arch }}.zip" "$env:RUNNER_TEMP/extracted archive"
           if (@(Get-ChildItem "$env:RUNNER_TEMP/extracted archive" -File).Count -ne 2) { throw 'Archive must contain exactly two files.' }
           python tests/test_cli.py "$env:RUNNER_TEMP/extracted archive/inimod.exe"
           if ($LASTEXITCODE) { throw 'Extracted archive regression test failed.' }

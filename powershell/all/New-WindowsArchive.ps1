@@ -35,12 +35,12 @@ $noticeFiles += @(Get-ChildItem $BinaryDirectory -File -Filter 'COPYING*' | Sort
 if ($noticeFiles.Count -eq 3) {
     throw 'Compiler/runtime license notices are missing.'
 }
-$text = "IniMod 1.0 — portable Windows $Architecture`nExtract inimod.exe into the Mystic directory or another chosen location.`nNo installation, PATH update or service is required.`n`n"
+$text = "IniMod 1.0.2 — portable Windows $Architecture`nExtract inimod.exe into the Mystic directory or another chosen location.`nNo installation, PATH update or service is required.`n`n"
 foreach ($name in $noticeFiles) {
     $text += "`n=== $name ===`n" + [IO.File]::ReadAllText((Join-Path $BinaryDirectory $name)) + "`n"
 }
 [IO.File]::WriteAllText((Join-Path $payload 'README.txt'), $text)
-$archive = Join-Path $output "inimod-1.0-windows-$Architecture.zip"
+$archive = Join-Path $output "inimod-1.0.2-windows-$Architecture.zip"
 Compress-Archive -LiteralPath (Join-Path $payload 'inimod.exe'), (Join-Path $payload 'README.txt') -DestinationPath $archive
 $hash = (Get-FileHash $archive).Hash.ToLowerInvariant()
 [IO.File]::WriteAllText((Join-Path $output 'SHA256SUMS'), "$hash  $([IO.Path]::GetFileName($archive))`n")
