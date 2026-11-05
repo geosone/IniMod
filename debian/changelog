@@ -1,3 +1,11 @@
+inimod (1.0+packaging2) unstable; urgency=medium
+
+  * Release alongside the 1.0.1 Windows MSI, which appends its installation
+    folder to the machine PATH and removes only that member on uninstall.
+  * No change to the Debian command or its installed files.
+
+ -- Disconnected by Peer AT <geos_one@disconnected-by-peer.at>  Thu, 05 Nov 2026 15:00:00 +0100
+
 inimod (1.0+packaging1) unstable; urgency=medium
 
   * Package upstream 1.0 with a pinned JPLib source snapshot.

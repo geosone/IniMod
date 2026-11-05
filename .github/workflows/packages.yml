@@ -200,4 +200,4 @@ jobs:
         run: |
           cd artifacts
           sha256sum *.tar.gz *.zip *.deb *.msi > SHA256SUMS
-          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "IniMod 1.0 packages and portable archives" --generate-notes *.tar.gz *.zip *.deb *.msi SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "IniMod $GITHUB_REF_NAME packages and portable archives" --generate-notes *.tar.gz *.zip *.deb *.msi SHA256SUMS
