@@ -33,4 +33,18 @@ with tempfile.TemporaryDirectory(prefix="inimod-test-") as directory:
     assert "[Temporary]" not in path.read_text(encoding="utf-8-sig")
     invalid = subprocess.run([exe, "invalid-command"], capture_output=True)
     assert invalid.returncode == 2, invalid.returncode
-print("PASS IniMod 1.0.3 version, real read/write, UTF-8, comments, key rename/removal, section removal and syntax exit code.")
+
+    # --no-bom: a new (empty) INI gets plain UTF-8, no blank first line, and
+    # repeated writes keep exactly one blank line between sections.
+    fresh = pathlib.Path(directory) / "fresh.ini"
+    fresh.write_bytes(b"")
+    for section, key, value in (("COMMON", "VENDOR", "x"), ("COMMON", "PN", "y"), ("OTHER", "c", "3"), ("COMMON", "PN", "z")):
+        run("w", str(fresh), "-s", section, "-k", key, "-v", value, "--silent", "--no-bom")
+    assert fresh.read_bytes() == b"[COMMON]\nVENDOR=x\nPN=z\n\n[OTHER]\nc=3\n", fresh.read_bytes()
+
+    # Without --no-bom the historic default (UTF-8 with BOM) is unchanged.
+    bom = pathlib.Path(directory) / "bom.ini"
+    bom.write_bytes(b"")
+    run("w", str(bom), "-s", "S", "-k", "k", "-v", "v", "--silent")
+    assert bom.read_bytes() == b"\xef\xbb\xbf[S]\nk=v\n", bom.read_bytes()
+print("PASS IniMod 1.0.3 version, real read/write, UTF-8, comments, key rename/removal, section removal, syntax exit code, --no-bom and stable section layout.")

@@ -48,6 +48,13 @@ begin
   Result := TStr.Contains(FileName, '*') or TStr.Contains(FileName, '?');
 end;
 
+// Every command opens its INI here so that --no-bom applies to all writes.
+function CreateIni(const IniFileName: string; Encoding: TEncoding): TJPIniFile;
+begin
+  Result := TJPIniFile.Create(IniFileName, Encoding);
+  Result.WriteBOM := AppParams.WriteBOM;
+end;
+
 {$region '                                 DisplayIniValue                                  '}
 procedure DisplayIniValue(const IniFileName, Section, Key: string; Encoding: TEncoding);
 var
@@ -55,7 +62,7 @@ var
   Ini: TJPIniFile;
   IniSection: TJPIniSection;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := False;
 
@@ -84,7 +91,7 @@ var
   Ini: TJPIniFile;
   sl: TStringList;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   sl := TStringList.Create;
   try
     Ini.UpdateFileOnExit := False;
@@ -117,7 +124,7 @@ var
   Ini: TJPIniFile;
   sl: TStringList;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   sl := TStringList.Create;
   try
     Ini.UpdateFileOnExit := False;
@@ -144,7 +151,7 @@ procedure WriteIniValue(const IniFileName, Section, Key, Value: string; Encoding
 var
   Ini: TJPIniFile;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := True;
     Ini.WriteString(Section, Key, Value);
@@ -159,7 +166,7 @@ procedure WriteIniFileComment(const IniFileName: string; Comment: string; Encodi
 var
   Ini: TJPIniFile;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := True;
     if PaddingSpaces > 0 then Comment := StringOfChar(' ', PaddingSpaces) + Comment;
@@ -175,7 +182,7 @@ procedure RemoveIniFileComment(const IniFileName: string; Encoding: TEncoding);
 var
   Ini: TJPIniFile;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := True;
     Ini.ClearIniComment;
@@ -190,7 +197,7 @@ procedure WriteIniSectionComment(const IniFileName, Section: string; Comment: st
 var
   Ini: TJPIniFile;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := True;
     if PaddingSpaces > 0 then Comment := StringOfChar(' ', PaddingSpaces) + Comment;
@@ -206,7 +213,7 @@ procedure RemoveIniSectionComment(const IniFileName, Section: string; Encoding: 
 var
   Ini: TJPIniFile;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := False;
     if Ini.RemoveSectionComment(Section, True) then Ini.UpdateFile;
@@ -222,7 +229,7 @@ var
   Ini: TJPIniFile;
   IniSection: TJPIniSection;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := False;
     if not Ini.SectionExists(Section) then Exit;
@@ -252,7 +259,7 @@ procedure RemoveIniKey(const IniFileName, Section, Key: string; Encoding: TEncod
 var
   Ini: TJPIniFile;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := False;
 
@@ -274,7 +281,7 @@ procedure RemoveIniSection(const IniFileName, Section: string; Encoding: TEncodi
 var
   Ini: TJPIniFile;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := False;
 
@@ -304,7 +311,7 @@ var
 begin
   FileComment := '';
 
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
 
     if Ini.Sections.Count > 0 then
@@ -336,7 +343,7 @@ begin
     sl := TStringList.Create;
     try
       sl.Text := FileComment;
-      sl.WriteBOM := True;
+      sl.WriteBOM := AppParams.WriteBOM;
       sl.SaveToFile(IniFileName, Encoding);
     finally
       sl.Free;
@@ -352,7 +359,7 @@ var
   IniSections: TJPIniSections;
   i, x: integer;
 begin
-  Ini := TJPIniFile.Create(IniFileName, Encoding);
+  Ini := CreateIni(IniFileName, Encoding);
   try
     Ini.UpdateFileOnExit := False;
 

@@ -2152,10 +2152,19 @@ end;
 function TJPIniSections.AsString: string;
 var
   i: integer;
+  s: string;
 begin
+  // IniMod fork: the separator goes only BETWEEN non-empty sections. The
+  // unnamed header section (file comment) is empty for most files and used to
+  // emit a blank first line; a trailing separator added a blank last line.
   Result := '';
   for i := 0 to Count - 1 do
-    Result := Result + Items[i].AsString + SectionsSeparator;
+  begin
+    s := Items[i].AsString;
+    if s = '' then Continue;
+    if Result <> '' then Result := Result + SectionsSeparator;
+    Result := Result + s;
+  end;
 end;
 
 constructor TJPIniSections.Create(AItemClass: TCollectionItemClass);

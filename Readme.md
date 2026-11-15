@@ -70,6 +70,7 @@ Options and input files can be placed in any order, but `--` (double dash follow
 | `-x NUM`                     | Padding spaces (for comments). NUM - a positive integer.            |
 | `-rd`, `--recurse-depth=NUM` | Recursion depth when searching for files. NUM - a positive integer. |
 | `--silent`                   | Do not display some messages.                                       |
+| `--no-bom`                   | Save INI files as UTF-8 without a byte order mark (BOM).            |
 | `-h`, `--help`               | Show this help.                                                     |
 | `--version`                  | Show application version.                                           |
 | `--license`                  | Display program license.                                            |
@@ -92,7 +93,7 @@ Eg.: `file.ini` `*config*.ini` `"long file name.ini"`
 
 ## Hints
 
-INI files are saved using **UTF-8** encoding.
+INI files are saved using **UTF-8** encoding. By default a UTF-8 byte order mark (BOM) is written; use `--no-bom` for plain UTF-8, e.g. for Unix tools or build scripts that compare files.
 
 To create a **new section**, run the program with the `Write` command and specify the name of the desired section. If this section does not exist in the INI file, it will be created automatically.
 

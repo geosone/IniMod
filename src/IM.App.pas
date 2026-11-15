@@ -82,6 +82,7 @@ begin
   AppParams.CommentPadding := 0;
   SetLength(AppParams.Files, 0);
   AppParams.Encoding := TEncoding.UTF8;
+  AppParams.WriteBOM := True;
   AppParams.Silent := False;
   AppParams.RecurseDepth := 0;
 
@@ -245,6 +246,7 @@ begin
     'rd', 'recurse-depth', cvtRequired, False, False, 'Recursion depth when searching for files. NUM - a positive integer.', 'NUM', Category
   );
   Cmd.RegisterLongOption('silent', cvtNone, False, False, 'Do not display some messages.', '', Category);
+  Cmd.RegisterLongOption('no-bom', cvtNone, False, False, 'Save INI files as UTF-8 without a byte order mark (BOM).', '', Category);
 
   Category := 'info';
   Cmd.RegisterOption('h', 'help', cvtNone, False, False, 'Show this help.', '', Category);
@@ -385,6 +387,7 @@ begin
 
 
   AppParams.Silent := Cmd.IsLongOptionExists('silent');
+  AppParams.WriteBOM := not Cmd.IsLongOptionExists('no-bom');
 
   if Cmd.IsOptionExists('s') then AppParams.Section := Trim(Cmd.GetOptionValue('s'));      // Section
   if Cmd.IsOptionExists('k') then AppParams.Key := Trim(Cmd.GetOptionValue('k'));          // Key
