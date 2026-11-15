@@ -96,7 +96,7 @@ for ($i = 0; $i -lt $files.Count; $i++) {
 }
 $wxs = Join-Path $output 'package.wxs'
 $document.Save($wxs)
-$msi = Join-Path $output "inimod-1.0.3-windows-$Architecture.msi"
+$msi = Join-Path $output "inimod-1.0.4-windows-$Architecture.msi"
 & wixl -a $Architecture -o $msi $wxs
 if ($LASTEXITCODE) {
     throw 'MSI packaging failed.'

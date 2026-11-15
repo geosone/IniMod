@@ -5,8 +5,8 @@
 //   x86_64-w64-mingw32-windres -O res -i src/IniMod.rc -o src/IniMod.res
 // Windows Installer compares FILEVERSION during MSI upgrades.
 1 VERSIONINFO
-FILEVERSION 1,0,3,0
-PRODUCTVERSION 1,0,3,0
+FILEVERSION 1,0,4,0
+PRODUCTVERSION 1,0,4,0
 FILEOS 0x4
 FILETYPE 0x1
 BEGIN
@@ -17,13 +17,13 @@ BEGIN
       VALUE "Comments", "https://www.pazera-software.com"
       VALUE "CompanyName", "Jacek Pazera"
       VALUE "FileDescription", "IniMod"
-      VALUE "FileVersion", "1.0.3.0"
+      VALUE "FileVersion", "1.0.4.0"
       VALUE "InternalName", "IniMod"
       VALUE "LegalCopyright", "Jacek Pazera"
       VALUE "LegalTrademarks", "Jacek Pazera"
       VALUE "OriginalFilename", "IniMod.exe"
       VALUE "ProductName", "IniMod"
-      VALUE "ProductVersion", "1.0.3"
+      VALUE "ProductVersion", "1.0.4"
     END
   END
   BLOCK "VarFileInfo"

@@ -1,3 +1,12 @@
+inimod (1.0.4) unstable; urgency=medium
+
+  * New --no-bom option saves INI files as UTF-8 without a byte order mark.
+    The default stays UTF-8 with BOM.
+  * Saved files no longer start or end with a blank line, and repeated
+    writes keep the layout stable.
+
+ -- Disconnected by Peer AT <geos_one@disconnected-by-peer.at>  Sun, 15 Nov 2026 02:50:52 +0100
+
 inimod (1.0.3) unstable; urgency=medium
 
   * The Windows executable carries version resource 1.0.3.0, generated from

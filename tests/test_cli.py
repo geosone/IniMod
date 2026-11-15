@@ -15,7 +15,7 @@ def run(*args):
 
 
 # The fork release version must match the MSI, archive and Debian package names.
-assert run("--version").startswith("IniMod 1.0.3 "), run("--version")
+assert run("--version").startswith("IniMod 1.0.4 "), run("--version")
 
 with tempfile.TemporaryDirectory(prefix="inimod-test-") as directory:
     path = pathlib.Path(directory) / "settings.ini"
@@ -47,4 +47,4 @@ with tempfile.TemporaryDirectory(prefix="inimod-test-") as directory:
     bom.write_bytes(b"")
     run("w", str(bom), "-s", "S", "-k", "k", "-v", "v", "--silent")
     assert bom.read_bytes() == b"\xef\xbb\xbf[S]\nk=v\n", bom.read_bytes()
-print("PASS IniMod 1.0.3 version, real read/write, UTF-8, comments, key rename/removal, section removal, syntax exit code, --no-bom and stable section layout.")
+print("PASS IniMod 1.0.4 version, real read/write, UTF-8, comments, key rename/removal, section removal, syntax exit code, --no-bom and stable section layout.")
