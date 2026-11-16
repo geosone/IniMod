@@ -27,6 +27,7 @@ type
     CommentPadding: integer;  // -x
     Silent: Boolean;          // --silent
     Encoding: TEncoding;      // no option. TODO: add Encoding to options
+    WriteBOM: Boolean;        // --no-bom clears it (default: write a UTF-8 BOM)
     Files: TStringDynArray;   // the list of file names/masks
     GithubUrl: string;        // stores the GitHub repo URL
     RecurseDepth: integer;    // -rd, --recurse-depth

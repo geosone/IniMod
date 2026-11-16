@@ -1,4 +1,5 @@
 """Exercise the real CLI in a private directory; never edit operator INIs."""
+import os
 import pathlib
 import subprocess
 import sys
@@ -13,6 +14,9 @@ def run(*args):
         raise AssertionError(f"CLI failed ({result.returncode}): {result.stderr}")
     return result.stdout.strip()
 
+
+# The fork release version must match the MSI, archive and Debian package names.
+assert run("--version").startswith("IniMod 1.0.4 "), run("--version")
 
 with tempfile.TemporaryDirectory(prefix="inimod-test-") as directory:
     path = pathlib.Path(directory) / "settings.ini"
@@ -30,4 +34,20 @@ with tempfile.TemporaryDirectory(prefix="inimod-test-") as directory:
     assert "[Temporary]" not in path.read_text(encoding="utf-8-sig")
     invalid = subprocess.run([exe, "invalid-command"], capture_output=True)
     assert invalid.returncode == 2, invalid.returncode
-print("PASS real IniMod read/write, UTF-8, comments, key rename/removal, section removal and syntax exit code.")
+
+    # --no-bom: a new (empty) INI gets plain UTF-8, no blank first line, and
+    # repeated writes keep exactly one blank line between sections.
+    # IniMod writes the native line ending: CRLF on Windows, LF elsewhere.
+    nl = b"\r\n" if os.name == "nt" else b"\n"
+    fresh = pathlib.Path(directory) / "fresh.ini"
+    fresh.write_bytes(b"")
+    for section, key, value in (("COMMON", "VENDOR", "x"), ("COMMON", "PN", "y"), ("OTHER", "c", "3"), ("COMMON", "PN", "z")):
+        run("w", str(fresh), "-s", section, "-k", key, "-v", value, "--silent", "--no-bom")
+    assert fresh.read_bytes() == nl.join([b"[COMMON]", b"VENDOR=x", b"PN=z", b"", b"[OTHER]", b"c=3", b""]), fresh.read_bytes()
+
+    # Without --no-bom the historic default (UTF-8 with BOM) is unchanged.
+    bom = pathlib.Path(directory) / "bom.ini"
+    bom.write_bytes(b"")
+    run("w", str(bom), "-s", "S", "-k", "k", "-v", "v", "--silent")
+    assert bom.read_bytes() == b"\xef\xbb\xbf" + nl.join([b"[S]", b"k=v", b""]), bom.read_bytes()
+print("PASS IniMod 1.0.4 version, real read/write, UTF-8, comments, key rename/removal, section removal, syntax exit code, --no-bom and stable section layout.")

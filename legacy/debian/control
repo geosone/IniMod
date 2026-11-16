@@ -1,0 +1,15 @@
+Source: inimod
+Section: utils
+Priority: optional
+Maintainer: Disconnected by Peer AT <admin@disconnected-by-peer.at>
+Build-Depends: debhelper-compat (= 13), fp-compiler (>= 3.2.0), fp-units-base, fp-units-fcl, lazarus-src, python3
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Homepage: https://github.com/geosone/IniMod
+
+Package: inimod
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: command-line INI configuration editor
+ Read, write, rename and remove INI settings while retaining comments.
+ Built with Free Pascal and the pinned JPLib source snapshot.

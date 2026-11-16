@@ -1,0 +1,43 @@
+====== Downloads ======
+
+Public tools and packages maintained by **Disconnected by Peer // AT**.
+
+  * [[https://bbs.disconnected-by-peer.at/windows/|Windows downloads]] – ZIP archives, larger installers and accompanying sources.
+  * [[https://bbs.disconnected-by-peer.at/linux/|Linux downloads]] – portable tools in tar.gz archives.
+  * [[https://bbs.disconnected-by-peer.at/debian/|Debian package archive]] – the separately maintained DEB packages.
+
+[[:de:downloads:start|Deutsch]] · [[:en:downloads:start|English]]
+
+===== IniMod =====
+
+IniMod is a general command-line INI editor. It can be used by independent Sysop scripts without installing Mystic.
+
+[[https://github.com/geosone/IniMod/releases/tag/v1.0-portable.1|Tested release: IniMod 1.0 – portable builds 1]] · [[https://github.com/geosone/IniMod|Source]] · [[https://github.com/geosone/IniMod/actions/runs/41210093732|Build and tests]]
+
+^ Platform ^ Selection ^ Contents ^
+| Windows | x86 or x64 | ''inimod.exe'' and ''README.txt'' in ZIP |
+| Linux | i386, amd64, armhf or arm64 | ''inimod'' and ''README.txt'' in tar.gz |
+
+Extract the matching archive and place the executable in your chosen directory, such as ''C:\Mystic'' or ''/opt/mystic''. No MSI/DEB installation or system-wide PATH change is needed. The executable name has no architecture suffix.
+
+==== Tested systems ====
+
+The same Linux build was tested on Debian 11 Bullseye, Debian 12 Bookworm, Debian 13 Trixie, Ubuntu 24.04 and Ubuntu 26.04, for all four offered architectures. i386 ran with the distribution's 32-bit libc on an amd64 kernel; this does not establish support for a complete i386 Ubuntu installation in the Mystic installer.
+
+Windows tests include UTF-8 and executable paths containing spaces. Existing command and option names are retained. The GitHub release includes ''SHA256SUMS'' and a build report; the local download directories provide ''SHA256SUMS-IniMod''.
+
+==== Example ====
+
+<code>
+inimod w settings.ini -s General -k Name -v Example --silent
+inimod r settings.ini -s General -k Name --silent
+</code>
+
+From PowerShell in the same directory use ''./inimod.exe''; on Linux use ''./inimod'' when the executable is not in PATH. The accompanying README contains attribution and licence notices.
+
+===== Mystic tools in development =====
+
+  * [[https://github.com/geosone/mdatmod|mdatmod]] – a Pascal tool for version-validated Mystic DAT files; currently read-only research, not a released DAT writer.
+  * [[https://github.com/geosone/mpemtrans|mpemtrans]] – a PEM/cryptlib converter adaptation for Linux and Windows; not yet released for production certificates.
+
+The tools have independent repositories. Presentation assets belong to the theme project; installation and configuration belong to mysticd.

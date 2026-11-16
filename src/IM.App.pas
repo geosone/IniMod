@@ -58,8 +58,11 @@ begin
   AppName := 'IniMod';
   MajorVersion := 1;
   MinorVersion := 0;
+  // Fork release 1.0.4: the MSI, archives and Debian package carry the same
+  // three-part version. JPLib's format has no revision token, so append it.
+  RevisionNumber := 4;
   Self.Date := EncodeDate(2021, 02, 02);
-  FullNameFormat := '%AppName% %MajorVersion%.%MinorVersion% [%OSShort% %Bits%-bit] (%AppDate%)';
+  FullNameFormat := '%AppName% %MajorVersion%.%MinorVersion%.' + IntToStr(RevisionNumber) + ' [%OSShort% %Bits%-bit] (%AppDate%)';
   Description := 'Console application for managing INI files.';
   Author := 'Jacek Pazera';
   HomePage := 'https://www.pazera-software.com/products/inimod/';
@@ -79,6 +82,7 @@ begin
   AppParams.CommentPadding := 0;
   SetLength(AppParams.Files, 0);
   AppParams.Encoding := TEncoding.UTF8;
+  AppParams.WriteBOM := True;
   AppParams.Silent := False;
   AppParams.RecurseDepth := 0;
 
@@ -242,6 +246,7 @@ begin
     'rd', 'recurse-depth', cvtRequired, False, False, 'Recursion depth when searching for files. NUM - a positive integer.', 'NUM', Category
   );
   Cmd.RegisterLongOption('silent', cvtNone, False, False, 'Do not display some messages.', '', Category);
+  Cmd.RegisterLongOption('no-bom', cvtNone, False, False, 'Save INI files as UTF-8 without a byte order mark (BOM).', '', Category);
 
   Category := 'info';
   Cmd.RegisterOption('h', 'help', cvtNone, False, False, 'Show this help.', '', Category);
@@ -382,6 +387,7 @@ begin
 
 
   AppParams.Silent := Cmd.IsLongOptionExists('silent');
+  AppParams.WriteBOM := not Cmd.IsLongOptionExists('no-bom');
 
   if Cmd.IsOptionExists('s') then AppParams.Section := Trim(Cmd.GetOptionValue('s'));      // Section
   if Cmd.IsOptionExists('k') then AppParams.Key := Trim(Cmd.GetOptionValue('k'));          // Key

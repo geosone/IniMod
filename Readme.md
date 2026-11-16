@@ -70,6 +70,7 @@ Options and input files can be placed in any order, but `--` (double dash follow
 | `-x NUM`                     | Padding spaces (for comments). NUM - a positive integer.            |
 | `-rd`, `--recurse-depth=NUM` | Recursion depth when searching for files. NUM - a positive integer. |
 | `--silent`                   | Do not display some messages.                                       |
+| `--no-bom`                   | Save INI files as UTF-8 without a byte order mark (BOM).            |
 | `-h`, `--help`               | Show this help.                                                     |
 | `--version`                  | Show application version.                                           |
 | `--license`                  | Display program license.                                            |
@@ -92,7 +93,7 @@ Eg.: `file.ini` `*config*.ini` `"long file name.ini"`
 
 ## Hints
 
-INI files are saved using **UTF-8** encoding.
+INI files are saved using **UTF-8** encoding. By default a UTF-8 byte order mark (BOM) is written; use `--no-bom` for plain UTF-8, e.g. for Unix tools or build scripts that compare files.
 
 To create a **new section**, run the program with the `Write` command and specify the name of the desired section. If this section does not exist in the INI file, it will be created automatically.
 
@@ -127,17 +128,30 @@ How to build:
 
 2021.02.02 - Version 1.0
 
-## Maintained packages
+## Maintained portable builds
 
-The maintained fork builds Debian packages and native Windows x86/x64 MSI
-packages through GitHub Actions. The common `debian/` recipe serves Debian
-12/13 and amd64/arm64/armhf; it can also be used by Jenkins Debian Glue on
-debdev. Build and test status must be checked before publishing downloads.
+The maintained fork builds native Linux amd64/arm64/armhf tar.gz archives and
+Windows x86/x64 ZIP archives through GitHub Actions. Each archive contains
+exactly one executable (`inimod` or `inimod.exe`) and README.txt, including
+notices. The Mystic installer continues to use only these portable archives.
 
-The Linux fork accepts absolute filenames beginning with `/` without treating
-them as Windows-style options. Existing commands and option names are retained.
-The required JPLib Base/Logging snapshot is vendored and pinned in
-`third_party/JPLib/SNAPSHOT.txt`; no retired download website is required.
+The executable name never includes an architecture suffix. Extract it directly
+into the Mystic directory to preserve old Sysop script calls. The fork retains
+existing commands/options, fixes absolute Linux filenames and quoted executable
+paths on Windows, and tests both ordinary and spaced executable paths.
 
-Application/package builds belong in this repository. Mystic installation and
-configuration integration belong in mysticd; BBS theme assets in mystic-theme.
+Additional DEB and MSI packages are built by the same workflow for operators
+who prefer system installation. DEBs install `/usr/bin/inimod`; MSIs install
+under Program Files and append their own directory to system PATH (removed on uninstall). The Debian source recipe is shared
+across architectures. CI builds and tests DEBs and tests MSI installation,
+repair, real INI editing and removal on disposable Windows runners.
+
+Build a DEB with `dpkg-buildpackage -us -uc` or `Dockerfile.debian`. Build an MSI
+on Linux with `pwsh -File New-WindowsMsi.ps1`, supplying the native executable
+directory, its expected SHA-256, a fresh output directory and x86/x64 target.
+The older recipes remain under legacy/ as historical reference.
+The required JPLib snapshot and its local parser fix are documented in
+third_party/JPLib/SNAPSHOT.txt. No retired download website is required.
+
+Application builds belong here. Mystic integration belongs in mysticd; BBS theme
+assets in mystic-theme. Only publish archives after native command tests pass.

@@ -1,0 +1,9 @@
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends make gcc libc6-dev fp-compiler fp-utils fp-units-base fp-units-fcl lazarus-src binutils-mingw-w64 && rm -rf /var/lib/apt/lists/*
+ADD --checksum=sha256:d542e349de246843d4f164829953d1f5b864126c5b62fd17c9b45b33e23d2f44 https://downloads.freepascal.org/fpc/dist/3.2.2/source/fpc-3.2.2.source.tar.gz /tmp/fpc-source.tar.gz
+RUN mkdir /opt/fpc-source && tar -xzf /tmp/fpc-source.tar.gz --strip-components=1 -C /opt/fpc-source
+WORKDIR /opt/fpc-source
+RUN if [ ! -f Makefile ]; then fpcmake -Tall -r; fi
+RUN make -j2 crossall crossinstall CPU_TARGET=x86_64 OS_TARGET=win64 BINUTILSPREFIX=x86_64-w64-mingw32- INSTALL_PREFIX=/opt/fpc-cross/x64 > /tmp/fpc-x64.log 2>&1 || { tail -70 /tmp/fpc-x64.log; exit 1; }
+RUN make distclean > /dev/null 2>&1 && make -j2 crossall crossinstall CPU_TARGET=i386 OS_TARGET=win32 BINUTILSPREFIX=i686-w64-mingw32- INSTALL_PREFIX=/opt/fpc-cross/x86 > /tmp/fpc-x86.log 2>&1 || { tail -70 /tmp/fpc-x86.log; exit 1; }
+WORKDIR /build
