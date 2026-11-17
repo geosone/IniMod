@@ -1,0 +1,2 @@
+Tests: cli-roundtrip
+Depends: inimod

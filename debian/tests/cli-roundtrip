@@ -1,0 +1,32 @@
+#!/bin/sh
+# Installed-package probe: write, read, rename and remove keys and sections
+# with the packaged inimod and check that comments survive the edits.
+set -eu
+
+work="${AUTOPKGTEST_TMP:-$(mktemp -d)}"
+ini="$work/probe.ini"
+
+printf '; runtime probe comment\n[General]\nKeep=yes\n' > "$ini"
+
+inimod w "$ini" -s General -k Name -v Fixture --silent
+test "$(inimod r "$ini" -s General -k Name --silent)" = Fixture
+test "$(inimod r "$ini" -s General -k Keep --silent)" = yes
+grep -q 'runtime probe comment' "$ini"
+
+inimod rnk "$ini" -s General -k Name -kn BBSName --silent
+test "$(inimod r "$ini" -s General -k BBSName --silent)" = Fixture
+
+inimod rmk "$ini" -s General -k BBSName --silent
+if grep -q '^BBSName=' "$ini"; then
+    echo 'rmk left the key in place' >&2
+    exit 1
+fi
+
+inimod w "$ini" -s Temporary -k Value -v Test --silent
+inimod rms "$ini" -s Temporary --silent
+if grep -q '^\[Temporary\]' "$ini"; then
+    echo 'rms left the section in place' >&2
+    exit 1
+fi
+
+echo 'PASS inimod CLI round trip'
